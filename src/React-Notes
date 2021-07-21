@@ -1,0 +1,191 @@
+babel : Is a JS transpiller which converts the old JS to new, and all browsers have it, so our content can run in all browsers.
+
+Now we can use components, technically , the component is defined as a JavaScript function.
+which is assigned to a varibale.
+The function returns the value of the expression. Basically a component will only show ehat is being returned by it/function.
+const App = () => {
+    return (<div><p>Hello World</p></div>);
+}
+
+The function defining the component may contain any kind of JavaScript code.
+
+As its just a function, we can also do the following.
+const App = () => {
+    console.log('jasmeet')
+    return (<div><p>Hello World</p></div>);
+}
+
+we can also add content of a component using {}.
+  return (
+    <div>
+      <p>Hello World {6 + 9 }</p>
+    </div>
+  );
+Any JavaScript code within the curly braces is evaluated and the result of this evaluation is embedded into the defined place in the HTML produced by the component.
+Simply, whatever inside {} which is inside JSX will be evaluated. ie its just like template string.
+
+JSX:
+It seems like React components are returning HTML markup. However, this is not the case. The layout of React components is mostly written using JSX. Although JSX looks like HTML, we are actually dealing with a way to write JavaScript. Under the hood, JSX returned by React components is compiled into JavaScript.
+
+After compiling, our application looks like this:
+const App = () => {
+  const age = 23;
+  return React.createElement(
+    "div",
+    null,
+    React.createElement("p", null, "hello Jasmeet, age:", age.toString())
+  );
+};
+
+we can write react without jsx, but not required. 
+In practice, JSX is much like HTML with the distinction that with JSX you can easily embed dynamic content by writing appropriate JavaScript within curly braces. 
+
+also its like xml, it every tag needs to be closed, <br /> , and not just <br>.
+
+Multiple components:
+we will now modify the code and add other compponent name Hello.
+code of the Hello component:
+const Hello = () => <h3>Its a heading</h3>;
+...
+const App = () => {
+  const age = 23;
+  return (
+    <div>
+      <p>Hello Jasmeet</p>
+      <Hello />
+    </div>
+  );
+};
+so Hello here will be returning a normal JSX code, inside the app.js and the n will be rendered.
+
+But also, take note that it is inside `div`, you cant put Hello outisde, 
+ return (
+    (<div>
+      <p>Hello Jasmeet</p>
+    </div>)
+    <Hello />
+  );
+you can but it will throw a error saying that `it should be wrapped`, 
+so we can use just <>....</>, but we also know now that only one element needs to returned which is the wrapper and we can put anything inside.
+
+Note that the content of a React component (usually) needs to contain one root element. If we, for example, try to define the component App without the outermost div-element it throws eror as said above.
+---
+Imp:
+Using a root element is not the only working option. An array of components is also a valid solution
+return [
+    <div><p>Hello Jasmeet</p></div>,
+    <h3>hello Guest<h3>,
+    <Hello />,
+    <div>some random text</div>
+]
+
+Now listen carefully, when you use a array, that means react will render the elements,components in it. ie you dont need a root element, and also use comma.
+-- So when we return a array, from any component, which means uska each element is going inside to, where we are using the component.
+
+As you see above the array solved the issue, now we can have multiple components without someone wrapping but using a Array.
+
+However, when defining the root component of the application this is not a particularly wise thing to do, and it makes the code look a bit ugly. so we use fragments <></> , i.e. by wrapping the elements to be returned by the component with an empty element:
+Fragments let you group a list of children without adding extra nodes to the DOM.
+
+props: passing data to components
+It is possible to pass data to components using so called props.
+
+Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
+
+Now the function defining the component has a parameter props. As an argument, the parameter receives an object, which has fields corresponding to all the "props" the user of the component defines.
+
+Now lets mody the app and Hello
+app.js:
+const App = () => {
+  const age = 23;
+  return (
+    <div>
+      <p>Hello Jasmeet</p>
+      <Hello name = 'Singji'/>
+    </div>
+  );
+};
+
+Hello.js:
+const Hello = (props) => <h3>Its a heading {props.name}</h3>;
+
+so whats its doinf here is, as we know that a component is a functions and has a parameter called prop , which is a object and and we can set the properties to it, but it will reive the value of the property where the component is beign used. 
+you see, its now behanving just like a JS function. where we call it( <Hello/> ) nad give the parameter a value:- <Hello name = 'jasmeet'/>.
+
+There can be an arbitrary number of props and their values can be "hard coded" strings or results of JavaScript expressions. If the value of the prop is achieved using JavaScript it must be wrapped with curly braces.
+like:
+const name = 'Singhji';
+return
+<Hello name = {name}/>,
+
+
+Errors:
+always use a capital for a component,
+otherwise react will create a empty element.
+Note that the content of a React component (usually) needs to contain one root element. If we, for example, try to define the component App without the outermost div-element.
+
+we can also do this:
+const random = function () {
+    return <h1>helloooo</h1>;
+  };
+
+  return (
+    <div>
+      {random()}
+      <Header course={course} />
+      <Content part={part1} exercise...
+
+A component is a functions , right? so it just works like it , you can log stuff, you can log the props obj if you want to check etc, its like:- app component hai, uske andar ek component hai, so jabhi app run hoga, that comp is called etc.
+
+
+JS:
+now you can use map functions to return jsx, but when you use map, you return jsx, but you cant return components as far now.
+In JS 1.3, 
+we could have returned a array od data to the app component or we could have returned a element containing hte jsx.
+
+const Content = (props) => {
+  const data = props.parts;
+  const p = (
+    <div>
+      {data.map((partObj) => {
+        return (
+          <p>
+            {partObj.name} {partObj.exercises}
+          </p>
+        );
+      })}
+    </div>
+  );
+  return p
+}
+Note , if we dont want to use <div> we can use <></>
+another way we could have returned a array of jsx elements.
+const Content = (props) => {
+  const data = props.parts;
+
+  const arrData = data.map((partObj) => {
+    return (
+      <p>
+        {partObj.name} {partObj.exercises}
+      </p>
+    );
+  });
+  console.log(arrData);
+  return arrData;
+};
+
+Now it works fine, but we can see a warning in the console. `Warning: Each child in a list should have a unique key prop.`
+Whenever you use a loop it is important to provide a unique key attribute. The reason is that React uses these keys to track if items were changed, added, or removed.
+we can just use the index right? (map method have a parame index).
+Imagine a scenario in which you have a list of items that can be reordered. If indexes are used as keys and we change the order of items, will React know about it? Well, it might not, as even though the order of items in an array changed, the keys did not. 
+{data.map((partObj, index) => {
+        return (
+          <p key={index}>
+            {partObj.name} {partObj.exercises}
+          </p>
+        );
+      })}
+But sometimes using keys is a bad idea and may cause bugs.
+
+
+
