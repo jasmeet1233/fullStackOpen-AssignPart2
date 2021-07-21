@@ -186,6 +186,8 @@ Imagine a scenario in which you have a list of items that can be reordered. If i
         );
       })}
 But sometimes using keys is a bad idea and may cause bugs.
+also when a array is used and element are stopred a key is usually required.
+
 
 
 

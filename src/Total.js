@@ -1,11 +1,12 @@
 import React from "react";
 
 const Total = (props) => {
-  console.log(props);
+  const exercisesObj = props.exercises
+  console.log(exercisesObj);
   return (
     <p>
       Number of exercises{" "}
-      {props.exercises1 + props.exercises2 + props.exercises3}
+      {exercisesObj.reduce((acc, curr) => acc+curr.exercises,0)}
     </p>
   );
 };

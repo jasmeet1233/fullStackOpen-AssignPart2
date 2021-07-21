@@ -12,10 +12,10 @@ const Content = (props) => {
         );
       })}
     </>
-    
+
   return p;
 };
 
 export default Content;
 
-//In this case we could have also done is,
+
