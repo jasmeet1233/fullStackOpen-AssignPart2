@@ -186,8 +186,441 @@ Imagine a scenario in which you have a list of items that can be reordered. If i
         );
       })}
 But sometimes using keys is a bad idea and may cause bugs.
-also when a array is used and element are stopred a key is usually required.
+also when a array is used and element are stopped a key is usually required.
+
+
+Component helper functions:
+
+defination of Render : run the component function and whatever JSX we return display on the page.
+Re-rendering: say 3 time we want to re-render,  toh browser be like, acha abhi ye jsx return karra after each func call, toh display , 2nd time bhi vahi karra, display! , and so on..
+
+Now coming back to the app and hello example.
+Now we use a function to calculate the age inside of the hello component.
+const Hello = (props) => {
+  const bornYear = () => {
+    const yearNow = new Date().getFullYear();
+    return yearNow - props.age;
+  };
+
+  return (
+    <div>
+      <p>
+        Hello {props.name}, you are {props.age} years old
+      </p>
+      <p>So you were probably born in {bornYear()}</p>
+    </div>
+  );
+};
+
+Object destructuring.
+as props is a object and we want to store few values of properites in variable we can do  this :
+const { name, age } = props
+-
+const bornYear = () => new Date().getFullYear() - age;
+
+and now insted of props.name, props.age we can use name,age variables.
+
+we assign the values of the properties directly to variables by destructuring the props object that is passed to the component function as a parameter:
+
+const Hello = ({ name, age }) => {
+
+
+Page re-rendering:
+What if we wanted to create a counter where the value increased as a function of time or at the click of a button?, 
+
+
+first we make a counter variable in index js and pass it as prop and as the page render the first time it will render the value, and now lets say i add counter++ in index js, this wont do anything. right? it wont re-render the page
+
+we can do that by taking a counter variable and chaging the reactdom to function and calling the func, so its all just manual. or we can use a settimeout and keep running the func we created and updating the value. 
+
+Making repeated calls to the ReactDOM.render method is not the recommended way to re-render components. Next, we'll introduce a better way of accomplishing this effect.
+
+so if you notice, when we render the page, and after 1sec we are re-rendering the page. But the change in only in one component, right? then why we need to render other-components(cause a page has multiple components) if just the state of one component is being changed.
+
+
+Stateful component:
+
+All of our components up till now have been simple in the sense that they have not contained any state that could change during the lifecycle of the component.
+
+Next, let's add state to our application's App component with the help of React's state hook.
+and we make index js back to normal as it was.
+
+In the first row, the file imports the useState function:
+import React, { useState } from 'react'
+
+
+The function body that defines the App component begins with the function call:
+
+const [ counter, setCounter ] = useState(0)
+
+The function call adds state to the App component and renders it initialized with the value of zero.(in our example)
+
+matlab we know the component will change, toh usko ek value de, toh jabhi hamara poora page 1st time render hoga toh vo component vaisa dikhega. with that value
+
+The function returns an array that contains two items. We assign the items to the variables counter and setCounter by using the destructuring assignment syntax. toh in our case counter is given 0 as the initial value(when the page load for the 1st time)
+
+so, on the first time usestate func run, we represented the state of the component with some initial value, and will be default untill we add event or something to chng it.
+
+The counter variable is assigned the initial value of state which is zero. The variable setCounter is assigned to a function that will be used to modify the state.
+
+setCounter func takes a argument, in that we pass the value we want to update the counter's
+so jabhi setCounter function run hoga, we can update the value of the counter(or we can call state), and then use in the div. Also whenever is the func is called it re-renders the component ie executed the component func body and returns whatever the component returns to the page. So div with the updated value is returned.
+
+but state kab hoga update? on a click of a button or any event calling the setCounter func,right? for now we just update the state by using settimeout which will update the state by calling the func in every 1sec, as we are making a timer.
+
+import React, { useState } from 'react'
+
+const App = () => {
+  const [ counter, setCounter ] = useState(0)
+
+  setTimeout(
+    () => setCounter(counter + 1),
+    1000
+  )
+
+  return (
+    <div>{counter}</div>
+  )
+}
+
+The function passed as the first parameter to the setTimeout function is invoked one second after calling the setTimeout function
+
+() => setCounter(counter + 1)
+------imp
+When the state modifying function setCounter is called, React re-renders the component which means that the function body of the component function gets re-executed:
+
+The second time the component function is executed it calls the useState function and returns the new default value of the state: 1. Executing the function body again also makes a new function call to setTimeout, which executes the one second timeout and increments the counter state again. Because the value of the counter variable is 1, incrementing the value by 1 is essentially the same as an expression setting the value of counter to 2.
+
+() => setCounter(2)
+
+so basically , setcounter updated value leta and useState ko deta and component re-render karrta. so we see the change
+
+we can also just log the number below setTimeout, to see that the func is reexecuted and alos to debug.
+
+
+Event handling:
+
+React events are named using camelCase, rather than lowercase.
+With JSX you pass a function as the event handler, rather than a string(in HTML).
+
+Since JSX is closer to JavaScript than to HTML, React DOM uses camelCase property naming convention instead of HTML attribute names.
+For example, class becomes className in JSX.
+
+and now as we give a function to a event, as its JS , we put ir in {}, just as usual.
+const App = () => {
+  const [counter, setCounter] = useState(0);
+
+  const handleClick = () => {
+    console.log("clicked");
+  };
+
+  return (
+    <div>
+      <div>{counter}</div>
+      <button onClick={handleClick}>plus</button>
+    </div>
+  );
+};
+
+Now every click of the plus button causes the handleClick function to be called, meaning that every click event will log a clicked message to the browser console.
+
+we can also do,
+<button onClick={() => console.log('clicked')}>plus</button>
+
+so our timer can now be handled with a click:
+<button onClick={() => setCounter(counter+1)}>plus</button>
+
+Adding a button to reset the value
+you can think that we do, onClick = {() => useState(0)}, this will give a error discuseed ahead, also useState cannot be used as callback func.
+
+<button onClick = {() => setCounter(0)}>Reset</button>
+
+
+Event handler is a function:
+We define the event handlers for our buttons where we declare their onClick attributes:
+
+<button onClick={() => setCounter(counter + 1)}> 
+  plus
+</button>
+What if we'd try to define the event handlers in a simpler form?
+
+<button onClick={setCounter(counter + 1)}> 
+  plus
+</button>
+This would completely break our application:
+we will get a error, too many re-renders.
+
+What's going on? An event handler is supposed to be either a function or a function reference, and when we write:
+
+<button onClick={setCounter(counter + 1)}>
+the event handler is actually a function call. In many situations this is ok, but not in this particular situation. In the beginning the value of the counter variable is 0. When React renders the component for the first time, it executes the function call setCounter(0+1), and changes the value of the component's state to 1. This will cause the component to be re-rendered, React will execute the setCounter function call again, and the state will change leading to another rerender...
+
+cause its like, react be like acha onclick ka ye hai, if we are giving an expression (2+3) or in our case setcounter(counter +1), this will get stored, ie it runs and that cause execution and then multiple re-render cause it gets repeated.
+
+as said earlier EH isa func, and it returning something. so when we give a func, it will return the func to react, and giving a expression meaning its returning a value.
+
+Now the button's attribute which defines what happens when the button is clicked - onClick - has the value () => setCounter(counter + 1). The setCounter function is called only when a user clicks the button.
+
+Usually defining event handlers within JSX-templates is not a good idea. Here it's ok, because our event handlers are so simple.
+
+Let's separate the event handlers into separate functions anyway:
+
+const App = () => {
+  const [counter, setCounter] = useState(0);
+
+  const increaseByOne = () => setCounter(counter+1);
+  const setToZero = () => setCounter(0)
+
+  return (
+    <div>
+      <div>{counter}</div>
+      <button onClick={increaseByOne}>plus</button>
+      <button onClick = {setToZero}>Reset</button>
+    </div>
+  );
+};
 
 
 
+Passing States to Child Elemnts :
 
+Let's refactor our application so that it's composed of three smaller components, one component for displaying the counter and two components for buttons.
+Often, several components need to reflect the same changing data. We recommend lifting the shared state up to their closest common ancestor.
+Button component :
+const Button = (props) => {
+    return(<button onClick = {props.handleClick}>{props.text}</button> )
+}
+
+Display component:
+const Display = (props) => {
+    return(<div>{props.counter}</div>)
+}
+
+App component:
+const App = () => {
+  const [counter, setCounter] = useState(0);
+
+  const increaseByOne = () => setCounter(counter+1);
+  const setToZero = () => setCounter(0);
+  const decreaseByOne = () => setCounter(counter-1);
+
+  return (
+    <div>
+      <Display counter = {counter}/>
+      <Button handleClick = {increaseByOne} text = 'plus' />
+      <Button handleClick = {setToZero} text = 'reset' />
+      <Button handleClick = {decreaseByOne} text = 'minus' />
+    </div>
+  );
+};
+
+Since we now have an easily reusable Button component, we've also implemented new functionality into our application by adding a button that can be used to decrement the counter.
+
+What we learned is, basically every JSX in the App, can we converted to a component which returns that JSX, so basically we can not even return JSX and just make a component to return it.
+
+
+
+Changes in state cause rerendering:
+
+Let's go over the main principles of how an application works once more.
+
+When the application starts, the code in App is executed. This code uses a useState hook to create the application state, setting an initial value of the variable counter. This component contains the Display component - which displays the counter's value, 0 - and three Button components. The buttons all have event handlers, which are used to change the state of the counter.
+
+When one of the buttons is clicked, the event handler is executed. The event handler changes the state of the App component with the setCounter function. Calling a function which changes the state causes the component to rerender.
+
+So, if a user clicks the plus button, the button's event handler changes the value of counter to 1, and the App component is rerendered. This causes its subcomponents Display and Button to also be re-rendered. Display receives the new value of the counter, 1, as props. The Button components receive event handlers which can be used to change the state of the counter.
+
+
+
+Refactoring the components:
+Now we see the siaplay component is a simple one line, so we use destructing directly, also in buttons
+for Display:
+const Display = ({counter}) => {
+  return <div>{counter}</div>;
+};
+
+for Buttons:
+const Button = ({handleClick, text}) => {
+  return <button onClick={handleClick}>{text}</button>;
+};
+
+
+
+Complex State:
+
+In our previous example the application state was simple as it was comprised of a single integer. What if our application requires a more complex state?
+
+In most cases the easiest and best way to accomplish this is by using the useState function multiple times to create separate "pieces" of state.
+
+In the following code we create two pieces of state for the application named left and right that both get the initial value of 0:
+
+const App = () => {
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(0);
+
+  return (
+    <div>
+      {left}
+      <button onClick={() => setLeft(left + 1)}>Left</button>
+      <button onClick={() => setRight(right + 1)}>Right</button>
+      {right}
+    </div>
+  );
+};
+
+The component gets access to the functions setLeft and setRight that it can use to update the two pieces of state.
+
+The component's state or a piece of its state can be of any type. We could implement the same functionality by saving the click count of both the left and right buttons into a single object:
+{
+  left: 0,
+  right: 0
+}
+
+Simple hai, state hai, and vo object ya kuch bhi value rehe sakta, what we are doing is we are just splitting the state, in left and right in to a object , that is agar user right button dabayega toh ham vo object ka right ko +1 karenge and obj.left show karenge as updated.
+
+const App = () => {
+  const [clicks, setClicks] = useState({ left: 0, right: 0 });
+
+  const handleLeftClick = () => {
+    setClicks({
+      left: clicks.left + 1,
+      right: clicks.right,
+    });
+  };
+//or we can store the obj in variable for neat
+  const handleRightClick = () => {
+    const newClicks = {
+      left : clicks.left,
+      right: clicks.right + 1,
+    };
+    setClicks(newClicks);
+  };
+
+  return (
+    <div>
+      {clicks.left}
+      <button onClick={handleLeftClick}>Left</button>
+      <button onClick={handleRightClick}>Right</button>
+      {clicks.right}
+    </div>
+  );
+};
+
+so we do the following, you might , why not, if i press left btn: setClicks(clicks.left+1), this will give a error, cause remember set func gives the value to usetstate and re-renders the component. so...
+It is forbidden in React to mutate state directly, since it can result in unexpected side effects.
+
+Now the application have just one state-value, or the component only has a single piece of state and the event handlers have to take care of changing the entire application state.
+
+The event handler looks a bit messy. When the left button is clicked, the following function is called:
+
+so we use the object rest parameter, which takes the properties and values and put somewhere.
+const handleLeftClick = () => {
+  const newClicks = { 
+    ...clicks, 
+    left: clicks.left + 1 
+  }
+  setClicks(newClicks)
+}
+
+const handleRightClick = () => {
+  const newClicks = { 
+    ...clicks, 
+    right: clicks.right + 1 
+  }
+  setClicks(newClicks)
+}
+
+so you see all the properties from the clicks objects is put, and then we modify the left/right.
+as you know the property having same name, gets the value which is last defined.
+const fname = {a:'jas', b:'meet', a:'singh'};
+log(fname.a)  // 'singh'
+
+Storing all of the state in a single state object is a bad choice for this particular application; there's no apparent benefit and the resulting application is a lot more complex. In this case storing the click counters into separate pieces of state is a far more suitable choice.
+
+There are situations where it can be beneficial to store a piece of application state in a more complex data structure.
+
+
+
+Handling Arrays:
+
+Let's add a piece of state to our application containing an array allClicks that remembers every click that has occurred in the application.
+
+const App = () => {
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(0);
+  const [allClicks, setAll] = useState([]);
+
+  const handleLeftClick = () => {
+    setLeft(left + 1);
+    setAll(allClicks.concat('L '));
+  };
+
+  const handleRightClick = () => {
+    setRight(right + 1);
+   setAll(allClicks.concat("R "));
+  };
+
+  return (
+    <div>
+      {left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {right}
+      <p>{allClicks.join(' ')}</p>
+    </div>
+  );
+};
+
+Every click is stored into a separate piece of state called allClicks that is initialized as an empty array:
+const [allClicks, setAll] = useState([])
+
+Why we didn't use push? cause push returns the new length of the array, right? it modifies the original array, but a length is returned in that place, so we use concat.
+
+
+
+Conditional rendering:
+
+Let's modify our application so that the rendering of the clicking history is handled by a new History component:
+History component:
+function History({ allClicks }) {
+  if (allClicks.length === 0) {
+    return <div>the app is used by pressing the buttons</div>;
+  } else {
+    return <div>Button Press History: {allClicks.join(" ")}</div>;
+  }
+};
+
+Now the behavior of the component depends on whether or not any buttons have been clicked. If not, meaning that the allClicks array is empty, the component renders a div element with some instructions instead: <div>the app is used by pressing the buttons</div>
+
+The History component renders completely different React elements depending on the state of the application. This is called conditional rendering.
+React also offers many other ways of doing conditional rendering. 
+
+Now we just add back the use of button component.
+<Button text = 'left' handleClick = {handleLeftClick}/>
+     <Button text = 'right' handleClick = {handleRightClick}/>
+
+
+
+Debugging React Applications:
+we can console.log stuff we if want to see what the value is, like log(props)
+You can pause the execution of your application code in the Chrome developer console's debugger, by writing the command debugger anywhere in your code.
+
+The execution will pause once it arrives at a point where the debugger command gets executed
+By going to the Console tab, it is easy to inspect the current state of variables.
+
+Rules of hooks.
+The useState function (as well as the useEffect function) must not be called from inside of a loop, a conditional expression, or any place that is not a function defining a component. This must be done to ensure that the hooks are always called in the same order, and if this isn't the case the application will behave erratically.
+
+Passing eventHandlers to the child components.
+const Button = (props) => (
+  <button onClick={props.handleClick}>
+    {props.text}
+  </button>
+)
+The component gets the event handler function from the handleClick prop, and the text of the button from the text prop.
+
+Do not define/create components in other compoenet files.
+
+Exercise:1.11
+THinking:
+so pehele hame kya kiya , we generated a random number and on click we showed a anectode, but now we are asked to give votes to each anectode, now hot to do this , we will see the connection , ok anectodes is a array and elements have index, so, how to store vote and display it with the array, its simple , we create a new array for votes, and at the indexes of eachanectodes we update the value, of the votes array, and display it. also as we know we cant update the usestate manually , we need a set, so we need a copy of the votes array, and we give to state to update the vote count.
