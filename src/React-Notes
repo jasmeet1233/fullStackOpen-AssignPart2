@@ -624,3 +624,12 @@ Do not define/create components in other compoenet files.
 Exercise:1.11
 THinking:
 so pehele hame kya kiya , we generated a random number and on click we showed a anectode, but now we are asked to give votes to each anectode, now hot to do this , we will see the connection , ok anectodes is a array and elements have index, so, how to store vote and display it with the array, its simple , we create a new array for votes, and at the indexes of eachanectodes we update the value, of the votes array, and display it. also as we know we cant update the usestate manually , we need a set, so we need a copy of the votes array, and we give to state to update the vote count.
+
+
+---------------Part 2 : Communication with the server
+
+Using Map:
+we can use map method, rather than manually displaying an array with objects in it.
+https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
+
+
