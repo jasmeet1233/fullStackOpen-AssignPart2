@@ -633,3 +633,139 @@ we can use map method, rather than manually displaying an array with objects in 
 https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
 
 
+
+Forms:
+
+Let's continue expanding our application by allowing users to add new notes. 
+
+const App = () => {
+  const [notes, setNotes] = useState([]);
+
+  const addNote = (e) => {
+    e.preventDefault();
+    console.log("clicked", e.target);
+  };
+
+  return (
+    <div>
+      <h1>Notes</h1>
+      <ul>
+        {notes.map((noteObj) => (
+          <Note key={noteObj.id} noteObj={noteObj} />
+        ))}
+      </ul>
+      <form onSubmit={addNote}>
+        <input  />
+        <button type="submit">
+          save
+        </button>
+      </form>
+    </div>
+  );
+};
+
+const [newNote, setNewNote] = useState('new note...')
+we want to set the input box value to the newNote, in html we use to use value attribute but when we use here we get a error saying .
+attribute of element is said prop of the element in react.
+the component we give to app, is actually a elemnt, too, like:
+<MyComponent>Hello world!</MyComponent>, so basically if i go to the MyComponent component, and put props, i can accesss the children propertt through props.
+
+So are you getting, we are basically creating our own element in react, which returns something(JSX)
+
+function Jas(props) {
+  return <div>{props.children}</div>;
+}
+
+return (
+    <div>
+      <Jas>Hello Jasmeet</Jas>
+
+the screen will have the text, and basically everthing (jsx) is been returned with the help of func
+
+Every element is object, even the component we create is a elemnet so becomes a obj.
+In the background, elements like div, h1 in eract are components and have props objects, and how they receive props, we just write normally a element, <h1>hello</h1>, so here the props obj is children:hello, and we add class, that too will be added, the point is we create our component/own element and give props there too, its just giving prop is diff in selfmade elements(components) and the normal elements(eg. div).
+
+In html we used value in imput to show the default valie, but there In HTML, form elements such as <input>, <textarea>, and <select> typically maintain their own state and update it based on user input. In React, mutable state is typically kept in the state property of components, and only updated with setState().
+
+We can combine the two by making the React state be the “single source of truth”. Then the React component that renders a form also controls what happens in that form on subsequent user input. An input form element whose value is controlled by React in this way is called a “controlled component”.
+
+Now we use `value` attribute in imput element, but you can see that react is give a error :
+You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+now what react says is if you use `value` attribute, it says ki if you use value the input field will be read-only. but if you want to make it editable give onChange event to it,
+sahi bhi hai, cause onchange event, will releases event when there is a change in the input(and we give a func which we call when event occurs), and we will just keep updating the `note` variable using setNewNote which will have the updated input value, and on submiting the button, we will use the final state of the note wherever we want.
+using default value attribute is not recommended by react cause then it will be uncontrolled component.
+App component:
+const App = () => {
+  const [notes, setNotes] = useState([]);
+  const [newNote, setNewNote] = useState("new note...");
+
+  const addNote = (e) => {
+    e.preventDefault();
+    console.log("clicked", e.target);
+    const note = {
+      id: notes.length + 1,
+      content: newNote,
+      date: new Date().toISOString,
+    };
+
+    setNotes(notes.concat(note));
+    setNewNote("");
+  };
+
+  const handleNoteChange = (event) => {
+    console.log(event.target.value);
+    setNewNote(event.target.value);
+  };
+  return (
+    <div>
+      <h1>Notes</h1>
+      <ul>
+        {notes.map((noteObj) => (
+          <Note key={noteObj.id} noteObj={noteObj} />
+        ))}
+      </ul>
+      <form onSubmit={addNote}>
+        <input value={newNote} onChange={handleNoteChange} />
+        <button type="submit">save</button>
+      </form>
+    </div>
+  );
+};
+
+Index component:
+function Note({ noteObj }) {
+  return <li>{noteObj.content}</li>;
+}
+
+
+
+Filtering Displayed Elements:
+Let's add some new functionality to our application that allows us to only view the important notes.
+
+Let's add a piece of state to the App component that keeps track of which notes should be displayed:
+
+abhi hamko ek button create kattna , onclicking it a defined variable will get the important notes array, which we can use to maybe render.
+so what can we done?, so pehele ham ek dhacha aka body banate hai, we put a button. show important.
+<button>Show important</button>
+
+now think.. when i click on the button, it stores the important stuff and when i click again to the button it stores the notes array,
+so its like, showall if , clicked, something is true, if that is true store the imortant notes, and if click again then !somethingwhichwastrue and becomes false , then show all the notes,
+
+so we use useState for setting the state of a variable to either true or false.
+const [showAll, setShowAll] = useState(true)
+
+and as we were talking about the storing:
+const notesToShow = showAll? notes : notes.filter((note) => note.important === true);
+, and now  we set the button to:
+<button onClick = {() => setShowAll(!showAll)}>Show Important</button>
+
+so now you can see if the button is clicked the state is changed of the varible(& page re-renders) and according to the condition notestoshow will get a array iltered out with imp notes.
+
+But now lets say we wan to change the important to 'all`, in the button after i click it, as its  a good userUI.
+so we just do, we know that at 1st render the state will be true, so just do this.
+ Show {showAll? "Important" : 'All'}.
+
+ Now you will question , ki we just wanted to show the result according to true/false, we could have had a global variable, but as you know this is areact, and its a component, the global variable which we would have used, would have reseted on the page re-renders, so that where react hooks come in, right? they remember the state of somethiing, in our case it remebred the state of `showall`... so basically react hooks have replace the global varible we used to use back.
+
+ ok click kiya , state becomes false, again clicked state become !false.
